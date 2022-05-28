@@ -3,23 +3,24 @@
 #include <string>
 #include <utility>
 
-#include "coord.h"
+#include "point.h"
+#include "exception.h"
 
-class Area final
+class area final
 {
-	using range = std::pair<double, double>;
-
-	range lat_range_;
-	range lon_range_;
+	std::pair<double, double> lat_range_;
+	std::pair<double, double> lon_range_;
 
 	std::string name_;
 public:
-	Area(const Coord c1, const Coord c2,
+	area(const point point1, const point point2,
 		const std::string& name = "");
 
-	bool check_is_inside(const Coord& c) const;
-	std::string get_name() const;
+	bool check_is_inside(const point& point) const;
+	const std::string& get_name() const;
+
+	std::pair<double, double> get_lat_range() const;
+	std::pair<double, double> get_lon_range() const;
 
 	void set_name(const std::string& name);
 };
-

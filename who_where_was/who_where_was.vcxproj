@@ -20,20 +20,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="area.h" />
-    <ClInclude Include="coord.h" />
+    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="point.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="location.h" />
     <ClInclude Include="location_name_finder.h" />
-    <ClInclude Include="time.h" />
-    <ClInclude Include="user_info.h" />
+    <ClInclude Include="timestamp.h" />
+    <ClInclude Include="user_id.h" />
+    <ClInclude Include="user_location_ordered_by_time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="area.cpp" />
     <ClCompile Include="database.cpp" />
+    <ClCompile Include="KDTree.cpp" />
     <ClCompile Include="location_name_finder.cpp" />
-    <ClCompile Include="time.cpp" />
-    <ClCompile Include="user_info.cpp" />
+    <ClCompile Include="timestamp.cpp" />
+    <ClCompile Include="user_location_ordered_by_time.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

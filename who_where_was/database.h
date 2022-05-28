@@ -1,25 +1,25 @@
 #pragma once
 #include <unordered_map>
 
-#include "user_info.h"
+#include "user_location_ordered_by_time.h"
+#include "user_id.h"
 
-class Database final
+class database final
 {
-	using unord_map = std::unordered_map<size_t, User_info>;
-	using const_it = unord_map::const_iterator;
-	using it = unord_map::iterator;
+	using unordered_map_iterator = std::unordered_map<user_id, user_location_ordered_by_time, user_id_hash>::iterator;
+	using unordered_map_const_iterator = std::unordered_map<user_id, user_location_ordered_by_time, user_id_hash>::const_iterator;
 
-	unord_map users_data_;
+	std::unordered_map<user_id, user_location_ordered_by_time, user_id_hash> user_data_by_id_;
 
 public:
-	void insert_or_assign(const size_t id, const Time& t, const Location& l);
-	void erase(const size_t id);
+	void insert_or_assign(const user_id& id, const timestamp& time, const location& loc);
+	void erase(const user_id& id);
 
-	it find(const size_t id);
-	it begin();
-	it end();
+	unordered_map_iterator find(const user_id& id);
+	unordered_map_iterator begin();
+	unordered_map_iterator end();
 
-	const_it cfind(const size_t id) const;
-	const_it cbegin() const;
-	const_it cend() const;
+	unordered_map_const_iterator cfind(const user_id& id) const;
+	unordered_map_const_iterator cbegin() const;
+	unordered_map_const_iterator cend() const;
 };

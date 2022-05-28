@@ -1,17 +1,17 @@
 #pragma once
 #include <string>
 
-#include "coord.h"
+#include "point.h"
 
-class Location final
+class location final
 {
-	Coord coord_;
+	point coord_;
 	std::string name_;
 public:
-	Location(const Coord& coord, const std::string& name = "") : coord_(coord), name_(name) { }
+	location(const point& coord, const std::string& name = "") : coord_(coord), name_(name) { }
 
-	Coord get_coord() const { return coord_; }
-	std::string get_name() const { return name_; }
+	const point& get_coord() const { return coord_; }
+	const std::string& get_name() const { return name_; }
 
 	void set_name(const std::string& name) { name_ = name; }
 };

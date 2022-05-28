@@ -1,42 +1,41 @@
 #include "database.h"
 
-
-void Database::insert_or_assign(const size_t id, const Time& t, const Location& l)
+void database::insert_or_assign(const user_id& id, const timestamp& time, const location& loc)
 {
-	users_data_[id].insert_or_assign(t, l);
+	user_data_by_id_[id].insert_or_assign(time, loc);
 }
 
-void Database::erase(const size_t id)
+void database::erase(const user_id& id)
 {
-	users_data_.erase(id);
+	user_data_by_id_.erase(id);
 }
 
-Database::it Database::find(const size_t id)
+database::unordered_map_iterator database::find(const user_id& id)
 {
-	return users_data_.find(id);
+	return user_data_by_id_.find(id);
 }
 
-Database::it Database::begin()
+database::unordered_map_iterator database::begin()
 {
-	return users_data_.begin();
+	return user_data_by_id_.begin();
 }
 
-Database::it Database::end()
+database::unordered_map_iterator database::end()
 {
-	return users_data_.end();
+	return user_data_by_id_.end();
 }
 
-Database::const_it Database::cfind(const size_t id) const
+database::unordered_map_const_iterator database::cfind(const user_id& id) const
 {
-	return users_data_.find(id);
+	return user_data_by_id_.find(id);
 }
 
-Database::const_it Database::cbegin() const
+database::unordered_map_const_iterator database::cbegin() const
 {
-	return users_data_.begin();
+	return user_data_by_id_.begin();
 }
 
-Database::const_it Database::cend() const
+database::unordered_map_const_iterator database::cend() const
 {
-	return users_data_.end();
+	return user_data_by_id_.end();
 }

@@ -1,12 +1,20 @@
 #pragma once
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "area.h"
-#include "coord.h"
+#include "KDTree.h"
+#include "point.h"
 
-class Location_name_finder final
+class location_name_finder final
 {
+	std::vector<area> areas_;
+	KDTree area_search_2d_tree_;
+	double max_area_dist_;
 public:
-	static std::string find(const Coord& c, const std::vector<Area>& known_areas);
+	location_name_finder(const std::vector<area>& areas);
+
+	std::optional<std::string> find_name(const point& point) const;
 };
+
