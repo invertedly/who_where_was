@@ -181,10 +181,10 @@ TEST(area, check_is_inside_on_area_border)
 
 	area area2({ lat1, lon1 }, { lat2, lon2 }, name);
 
-	EXPECT_TRUE(!area2.check_is_inside({ 10, 10 }));
-	EXPECT_TRUE( area2.check_is_inside({ 20, 20 }));
-	EXPECT_TRUE(!area2.check_is_inside({ -30, -30 }));
-	EXPECT_TRUE(!area2.check_is_inside({ 0, 0 }));
+	ASSERT_TRUE(!area2.check_is_inside({ 10, 10 }));
+	ASSERT_TRUE( area2.check_is_inside({ 20, 20 }));
+	ASSERT_TRUE(!area2.check_is_inside({ -30, -30 }));
+	ASSERT_TRUE(!area2.check_is_inside({ 0, 0 }));
 }
 
 TEST(area, check_is_inside_negative)
@@ -197,20 +197,20 @@ TEST(area, check_is_inside_negative)
 
 	area area3({ lat1, lon1 }, { lat2, lon2 }, name);
 
-	EXPECT_TRUE(!area3.check_is_inside({ 10, 10 }));
-	EXPECT_TRUE(!area3.check_is_inside({ 20, 20 }));
-	EXPECT_TRUE( area3.check_is_inside({ -30, -30 }));
-	EXPECT_TRUE(!area3.check_is_inside({ 0, 0 }));
+	ASSERT_TRUE(!area3.check_is_inside({ 10, 10 }));
+	ASSERT_TRUE(!area3.check_is_inside({ 20, 20 }));
+	ASSERT_TRUE( area3.check_is_inside({ -30, -30 }));
+	ASSERT_TRUE(!area3.check_is_inside({ 0, 0 }));
 }
 
 TEST(area, ctor_invalid_arg)
 {
-	EXPECT_THROW(area area({ 1, 1 }, { 1, 1 }), invalid_area);
+	ASSERT_THROW(area area({ 1, 1 }, { 1, 1 }), invalid_area);
 }
 
 TEST(timestamp, ctor_invalid_arg)
 {
-	EXPECT_THROW(timestamp ts(ts_invalid), Invalid_ts_format);
+	ASSERT_THROW(timestamp ts(ts_invalid), Invalid_ts_format);
 }
 
 TEST(location_name_finder, no_area_intersection) {
@@ -232,19 +232,19 @@ TEST(location_name_finder, no_area_intersection) {
 	location_name_finder name_finder(areas);
 
 	names = name_finder.find_names({10, 10});
-	EXPECT_EQ(names.size(), 1);
-	EXPECT_EQ(place1, names.back());
+	ASSERT_EQ(names.size(), 1);
+	ASSERT_EQ(place1, names.back());
 
 	names = name_finder.find_names({20, 20});
-	EXPECT_EQ(names.size(), 1);
-	EXPECT_EQ(place2, names.back());
+	ASSERT_EQ(names.size(), 1);
+	ASSERT_EQ(place2, names.back());
 
 	names = name_finder.find_names({-30, -30});
-	EXPECT_EQ(names.size(), 1);
-	EXPECT_EQ(place3, names.back());
+	ASSERT_EQ(names.size(), 1);
+	ASSERT_EQ(place3, names.back());
 
 	names = name_finder.find_names({ 0,0 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 }
 
 TEST(location_name_finder, single_area) {
@@ -261,17 +261,17 @@ TEST(location_name_finder, single_area) {
 	location_name_finder name_finder({area2});
 
 	names = name_finder.find_names({ 10, 10 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 
 	names = name_finder.find_names({ 20, 20 });
-	EXPECT_EQ(names.size(), 1);
-	EXPECT_EQ(place2, names.back());
+	ASSERT_EQ(names.size(), 1);
+	ASSERT_EQ(place2, names.back());
 
 	names = name_finder.find_names({ -30, -30 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 
 	names = name_finder.find_names({ 0,0 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 }
 
 TEST(location_name_finder, with_area_intersection) {
@@ -292,19 +292,19 @@ TEST(location_name_finder, with_area_intersection) {
 	location_name_finder name_finder({area4, area5});
 
 	names = name_finder.find_names({ 10, 10 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 
 	names = name_finder.find_names({ 20, 20 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 
 	names = name_finder.find_names({ -30, -30 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 
 	names = name_finder.find_names({ 0,0 });
-	EXPECT_EQ(names.size(), 0);
+	ASSERT_EQ(names.size(), 0);
 
 	names = name_finder.find_names({ 60, 60 });
-	EXPECT_EQ(names.size(), 2);
-	EXPECT_EQ(names[0], place4);
-	EXPECT_EQ(names[1], place5);
+	ASSERT_EQ(names.size(), 2);
+	ASSERT_EQ(names[0], place4);
+	ASSERT_EQ(names[1], place5);
 }
