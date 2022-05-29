@@ -15,6 +15,6 @@ class location_name_finder final
 public:
 	location_name_finder(const std::vector<area>& areas);
 
-	std::optional<std::string> find_name(const point& point) const;
+	const std::vector<std::string>& find_names(const point& point) const;
 };
 

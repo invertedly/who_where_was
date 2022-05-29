@@ -35,18 +35,22 @@ location_name_finder::location_name_finder(const std::vector<area>& areas) :
 	area_search_2d_tree_ = KDTree(area_search_keys);
 }
 
-std::optional<std::string> location_name_finder::find_name(const point& point) const
+const std::vector<std::string>& location_name_finder::find_names(const point& point) const
 {
 	std::vector<size_t> indices_to_check = area_search_2d_tree_.neighborhood_indices({ point.get_lat(), point.get_lon() }, max_area_dist_);
-	
+
+	std::vector<std::string> names;
+
 	for (const auto i : indices_to_check)
 	{
 		if (areas_[i].check_is_inside(point))
 		{
-			return { areas_[i].get_name() };
+			names.push_back(areas_[i].get_name());
 		}
 	}
 
-	return std::nullopt;
+	std::sort(names.begin(), names.end());
+
+	return names;
 }
 

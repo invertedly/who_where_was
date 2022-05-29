@@ -18,19 +18,19 @@ namespace
 	const std::string coord1 = "10 10 ";
 	const std::string coord2 = "20 20 ";
 	const std::string coord3 = "-30 -30 ";
-	const std::string coord4 = "40 40 ";
-	const std::string coord_unknwn = "0 0 ";
+	const std::string coord_unknown = "0 0 ";
 
-	const std::string place1 = "Place1 ";
-	const std::string place2 = "Place2 ";
-	const std::string place3 = "Place3 ";
-	const std::string place4 = "Place4 ";
-	const std::string place_unknwn = "Unknown ";
+	const std::string place1 = "Place1";
+	const std::string place2 = "Place2";
+	const std::string place3 = "Place3";
+	const std::string place4 = "Place4";
+	const std::string place5 = "Place5";
 
 	const std::string place1_range = "9 9 11 11 ";
 	const std::string place2_range = "20 20 21 21 ";
 	const std::string place3_range = "-29 -29 -31 -31 ";
-	const std::string place4_range = "40 40 40 40 ";
+	const std::string place4_range = "40 40 100 100";
+	const std::string place5_range = "45 45 90 90";
 
 	const std::string logs_u1(
 		ts1 + id1 + coord1 + "\n" +
@@ -45,11 +45,11 @@ namespace
 
 	const std::string logs_u3(
 		ts1 + id3 + coord1 + "\n" +
-		ts2 + id3 + coord_unknwn + "\n"
+		ts2 + id3 + coord_unknown + "\n"
 	);
 
 	const std::string logs_u4(
-		ts1 + id4 + coord_unknwn + "\n"
+		ts1 + id4 + coord_unknown + "\n"
 	);
 
 	const std::string logs_init_all(
@@ -60,17 +60,11 @@ namespace
 	);
 
 	const std::string places_init_all(
-		place1 + place1_range + "\n" +
-		place2 + place2_range + "\n" +
-		place3 + place3_range
+		place1 + " " + place1_range + "\n" +
+		place2 + " " + place2_range + "\n" +
+		place3 + " " + place3_range
 	);
 
-	const std::string places_answer(
-		place1 + "\n" +
-		place1 + "\n" +
-		place1 + "\n" +
-		"unknown" + "\n"
-	);
 
 	std::optional<std::string> get_user_logs(const size_t id)
 	{
@@ -105,7 +99,7 @@ namespace
 	}
 }
 
-TEST(database, db_insert) {
+TEST(database, insert) {
 	database db = init_db();
 
 	size_t count = 0;
@@ -119,21 +113,22 @@ TEST(database, db_insert) {
 		for (auto& [time, location] : user_data)
 		{
 			out
-			<< time.get_ts() << " "
+			<< time.get_ts()	<< " "
 			<< user_id.get_id() << " "
 			<< location.get_coord().get_lat() << " "
 			<< location.get_coord().get_lon() << " "
 			<< std::endl;
 		}
 
-		ASSERT_EQ(out.str(), get_user_logs(user_id.get_id()).value_or("no logs for user " 
-			+ std::stringstream(user_id.get_id()).str()));
+		ASSERT_EQ(out.str(), get_user_logs(user_id.get_id()).value_or(
+			"no logs for user " + std::stringstream(user_id.get_id()).str())
+		);
 	}
 
 	ASSERT_EQ(count, 4);
 }
 
-TEST(database, db_erase) {
+TEST(database, erase) {
 	database db = init_db();
 
 	std::vector<size_t> user_ids;
@@ -160,103 +155,156 @@ TEST(database, db_erase) {
 	ASSERT_EQ(user_ids, answer);
 }
 
-TEST(Area, check_is_inside_common)
+TEST(area, check_is_inside_positive)
 {
-	std::istringstream in_place1(place1 + place1_range);
-
 	std::string name;
 	double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
 
+	std::istringstream in_place1(place1 + " " + place1_range);
 	ASSERT_TRUE(in_place1 >> name >> lat1 >> lon1 >> lat2 >> lon2);
+
 	area area1({ lat1, lon1 }, { lat2, lon2 }, name);
-	ASSERT_TRUE(area1.check_is_inside({10, 10}));
+
+	ASSERT_TRUE( area1.check_is_inside({10, 10}));
 	ASSERT_TRUE(!area1.check_is_inside({20, 20}));
 	ASSERT_TRUE(!area1.check_is_inside({-30, -30}));
 	ASSERT_TRUE(!area1.check_is_inside({0, 0}));
 }
 
-TEST(Area, check_is_inside_border)
+TEST(area, check_is_inside_on_area_border)
 {
 	std::string name;
 	double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
 
-	std::istringstream in_place2(place2 + place2_range);
-
+	std::istringstream in_place2(place2 + " " +place2_range);
 	ASSERT_TRUE(in_place2 >> name >> lat1 >> lon1 >> lat2 >> lon2);
+
 	area area2({ lat1, lon1 }, { lat2, lon2 }, name);
-	ASSERT_TRUE(!area2.check_is_inside({ 10, 10 }));
-	ASSERT_TRUE(area2.check_is_inside({ 20, 20 }));
-	ASSERT_TRUE(!area2.check_is_inside({ -30, -30 }));
-	ASSERT_TRUE(!area2.check_is_inside({ 0, 0 }));
 
-	std::istringstream in_place3(place3 + place3_range);
-
-	ASSERT_TRUE(in_place3 >> name >> lat1 >> lon1 >> lat2 >> lon2);
-	area area3({ lat1, lon1 }, { lat2, lon2 }, name);
-	ASSERT_TRUE(!area3.check_is_inside({ 10, 10 }));
-	ASSERT_TRUE(!area3.check_is_inside({ 20, 20 }));
-	ASSERT_TRUE(area3.check_is_inside({ -30, -30 }));
-	ASSERT_TRUE(!area3.check_is_inside({ 0, 0 }));
+	EXPECT_TRUE(!area2.check_is_inside({ 10, 10 }));
+	EXPECT_TRUE( area2.check_is_inside({ 20, 20 }));
+	EXPECT_TRUE(!area2.check_is_inside({ -30, -30 }));
+	EXPECT_TRUE(!area2.check_is_inside({ 0, 0 }));
 }
 
-TEST(Area, ctor_invalid_arg)
+TEST(area, check_is_inside_negative)
+{
+	std::string name;
+	double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
+
+	std::istringstream in_place3(place3 + " " + place3_range);
+	ASSERT_TRUE(in_place3 >> name >> lat1 >> lon1 >> lat2 >> lon2);
+
+	area area3({ lat1, lon1 }, { lat2, lon2 }, name);
+
+	EXPECT_TRUE(!area3.check_is_inside({ 10, 10 }));
+	EXPECT_TRUE(!area3.check_is_inside({ 20, 20 }));
+	EXPECT_TRUE( area3.check_is_inside({ -30, -30 }));
+	EXPECT_TRUE(!area3.check_is_inside({ 0, 0 }));
+}
+
+TEST(area, ctor_invalid_arg)
 {
 	EXPECT_THROW(area area({ 1, 1 }, { 1, 1 }), invalid_area);
 }
 
-TEST(Timestamp, ctor_invalid_arg)
+TEST(timestamp, ctor_invalid_arg)
 {
 	EXPECT_THROW(timestamp ts(ts_invalid), Invalid_ts_format);
 }
 
-TEST(Loc_name_finder, common) {
+TEST(location_name_finder, no_area_intersection) {
 	std::istringstream places(places_init_all);
 
 	std::vector<area> areas;
 
-	std::string name;
+	std::vector<std::string> names;
+
+	std::string area_name;
+
 	double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
 
-	while (places >> name >> lat1 >> lon1 >> lat2 >> lon2)
+	while (places >> area_name >> lat1 >> lon1 >> lat2 >> lon2)
 	{
-		areas.push_back(area({ lat1, lon1 }, { lat2, lon2 }, name));
+		areas.push_back(area({ lat1, lon1 }, { lat2, lon2 }, area_name));
 	}
 
 	location_name_finder name_finder(areas);
 
-	name = name_finder.find_name({10, 10}).value_or("unknown");
-	EXPECT_EQ(place1, name + " ");
+	names = name_finder.find_names({10, 10});
+	EXPECT_EQ(names.size(), 1);
+	EXPECT_EQ(place1, names.back());
 
-	name = name_finder.find_name({20, 20}).value_or("unknown");
-	EXPECT_EQ(place2, name + " ");
+	names = name_finder.find_names({20, 20});
+	EXPECT_EQ(names.size(), 1);
+	EXPECT_EQ(place2, names.back());
 
-	name = name_finder.find_name({-30, -30}).value_or("unknown");
-	EXPECT_EQ(place3, name + " ");
+	names = name_finder.find_names({-30, -30});
+	EXPECT_EQ(names.size(), 1);
+	EXPECT_EQ(place3, names.back());
 
-	name = name_finder.find_name({ 0,0 }).value_or("unknown");
-	EXPECT_EQ(name, "unknown");
+	names = name_finder.find_names({ 0,0 });
+	EXPECT_EQ(names.size(), 0);
 }
 
-TEST(Loc_name_finder, border) {
-	std::istringstream in_place2(place2 + place2_range);
+TEST(location_name_finder, single_area) {
+	std::istringstream in_place2(place2 + " " + place2_range);
 
-	std::string name;
-	double lat1, lon1, lat2, lon2;
+	std::vector<std::string> names;
 
-	ASSERT_TRUE(in_place2 >> name >> lat1 >> lon1 >> lat2 >> lon2);
-	area area2({ lat1, lon1 }, { lat2, lon2 }, name);
+	std::string area_name;
+	double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
+
+	ASSERT_TRUE(in_place2 >> area_name >> lat1 >> lon1 >> lat2 >> lon2);
+	area area2({ lat1, lon1 }, { lat2, lon2 }, area_name);
 
 	location_name_finder name_finder({area2});
 
-	name = name_finder.find_name({ 10, 10 }).value_or("unknown");
-	EXPECT_EQ(name, "unknown");
+	names = name_finder.find_names({ 10, 10 });
+	EXPECT_EQ(names.size(), 0);
 
-	name = name_finder.find_name({ 20, 20 }).value_or("unknown");
-	EXPECT_EQ(place2, name + " ");
+	names = name_finder.find_names({ 20, 20 });
+	EXPECT_EQ(names.size(), 1);
+	EXPECT_EQ(place2, names.back());
 
-	name = name_finder.find_name({ -30, -30 }).value_or("unknown");
-	EXPECT_EQ(name, "unknown");
+	names = name_finder.find_names({ -30, -30 });
+	EXPECT_EQ(names.size(), 0);
 
-	name = name_finder.find_name({ 0,0 }).value_or("unknown");
-	EXPECT_EQ(name, "unknown");
+	names = name_finder.find_names({ 0,0 });
+	EXPECT_EQ(names.size(), 0);
+}
+
+TEST(location_name_finder, with_area_intersection) {
+	std::istringstream in_place4(place4 + " " + place4_range);
+	std::istringstream in_place5(place5 + " " + place5_range);
+
+	std::vector<std::string> names;
+
+	std::string area_name;
+	double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
+
+	ASSERT_TRUE(in_place4 >> area_name >> lat1 >> lon1 >> lat2 >> lon2);
+	area area4({ lat1, lon1 }, { lat2, lon2 }, area_name);
+
+	ASSERT_TRUE(in_place5 >> area_name >> lat1 >> lon1 >> lat2 >> lon2);
+	area area5({ lat1, lon1 }, { lat2, lon2 }, area_name);
+
+	location_name_finder name_finder({area4, area5});
+
+	names = name_finder.find_names({ 10, 10 });
+	EXPECT_EQ(names.size(), 0);
+
+	names = name_finder.find_names({ 20, 20 });
+	EXPECT_EQ(names.size(), 0);
+
+	names = name_finder.find_names({ -30, -30 });
+	EXPECT_EQ(names.size(), 0);
+
+	names = name_finder.find_names({ 0,0 });
+	EXPECT_EQ(names.size(), 0);
+
+	names = name_finder.find_names({ 60, 60 });
+	EXPECT_EQ(names.size(), 2);
+	EXPECT_EQ(names[0], place4);
+	EXPECT_EQ(names[1], place5);
 }
